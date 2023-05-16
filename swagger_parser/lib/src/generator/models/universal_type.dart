@@ -1,6 +1,8 @@
 import '../../utils/type_utils.dart';
 import 'programming_lang.dart';
 
+const forceNullable = true;
+
 /// Universal template for containing information about type
 class UniversalType {
   const UniversalType({
@@ -76,17 +78,18 @@ extension UniversalTypeX on UniversalType {
     for (var i = 0; i < arrayDepth; i++) {
       sb.write('>');
     }
-    if (nullable || (!isRequired && defaultValue == null)) {
+    if ((nullable || forceNullable) || (!isRequired && defaultValue == null)) {
       sb.write('?');
     }
     return sb.toString();
   }
 
   String _questionMark(ProgrammingLanguage lang) {
-    final questionMark =
-        isRequired && !nullable || arrayDepth > 0 || defaultValue != null
-            ? ''
-            : '?';
+    final questionMark = isRequired && !(nullable || forceNullable) ||
+            arrayDepth > 0 ||
+            defaultValue != null
+        ? ''
+        : '?';
     switch (lang) {
       case ProgrammingLanguage.dart:
         return type.toDartType(format) + questionMark;
